@@ -17,6 +17,7 @@ dist
 build/
 .env*
 .cache*
+/.serverless
 .serverless
 .serverless_nextjs
 .serverless_plugins
