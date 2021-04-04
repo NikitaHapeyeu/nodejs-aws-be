@@ -1,40 +1,37 @@
+
 import getProductById from '../handlers/getProductById';
+import { getMockedProducts } from '../utils/createMockData';
 import { products } from '../data';
-jest.mock('../data');
+
+jest.mock('../utils/createMockData');
 
 describe('getProductById', () => {
   afterEach(() => jest.resetAllMocks());
-  test('when valid id specified then return product', async () => {
-    products.push({ id: 234, value: 'data' });
-    const response = await getProductById({ pathParameters: { id: '234' } });
-    expect(response.statusCode).toEqual(200);
-    expect(response.body).toEqual(JSON.stringify({ id: 234, value: 'data' }));
+
+  test('should return 404 for non-existing product id', async () => {
+    getMockedProducts.mockReturnValue(products);
+    const event = { pathParameters: { id: '123' } };
+    const response = await getProductById(event);
+    expect(response).not.toBeNull();
+    expect(response.statusCode).toBe(404);
   });
 
-  test('when invalid id specified then 404 error returned', async () => {
-    products.push({ id: 234, value: 'data' });
-    const response = await getProductById({ pathParameters: { id: '999' } });
-    expect(response.statusCode).toEqual(404);
-    expect(response.body).toEqual(
-      JSON.stringify({ message: 'Failed to retrieve product with id 999' })
-    );
+  test('should return 500 for failure', async () => {
+    getMockedProducts.mockReturnValue(null);
+    const event = { pathParameters: undefined };
+    const response = await getProductById(event);
+    expect(response).not.toBeNull();
+    expect(response.statusCode).toBe(500);
   });
 
-  test('when id was not specified then 404 error returned', async () => {
-    products.push({ id: 234, value: 'data' });
-    const response = await getProductById({ pathParameters: {} });
-    expect(response.statusCode).toEqual(400);
-    expect(response.body).toEqual(
-      JSON.stringify({ message: 'Failed to retrieve id from request' })
-    );
-  });
-
-  test('when id was not numeric then 400 error returned', async () => {
-    products.push({ id: 234, value: 'data' });
-    const response = await getProductById({ pathParameters: { id: 'test' } });
-    expect(response.statusCode).toEqual(400);
-    expect(response.body).toEqual(
-      JSON.stringify({ message: 'Failed to retrieve id from request' })
-    );
+  test('should return 200 and return a product with id', async () => {
+    getMockedProducts.mockReturnValue(products);
+    const id = 'bb463b8b-b76c-4f6a-9726-65ab5730b69b';
+    const event = { pathParameters: { id } };
+    const response = await getProductById(event);
+    expect(response).not.toBeNull();
+    expect(response.statusCode).toBe(200);
+    expect(response.body).not.toBeNull();
+    expect(JSON.parse(response.body)).toMatchObject({ id });
   });
 });
