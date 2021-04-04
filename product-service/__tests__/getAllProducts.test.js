@@ -2,7 +2,6 @@ import getAllProducts from '../handlers/getAllProducts';
 import { getMockedProducts } from '../utils/createMockData';
 import { products } from '../data';
 
-
 jest.mock('../utils/createMockData');
 
 describe('getAllProducts', () => {
