@@ -2,7 +2,7 @@ openapi: 3.0.0
 
 info:
   title: nodejs-aws-be
-  description: API for nodejs-aws-be in AWS Cloud
+  description: API for nodejs-be in AWS Cloud
   version: 0.0.1
 
 servers:
