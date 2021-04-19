@@ -21,6 +21,23 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+    post:
+      summary: Create or update a product.
+      description: When id is provided in the request, a product is updated, otherwise a new product is created.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Created or Updated Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid Product model supplied.
   '/products/{id}':
     get:
       summary: Returns a Product by Id.
@@ -50,24 +67,15 @@ components:
   schemas:
     Product:
       properties:
-        id:
-          type: string
-          description: uuid
         title:
           type: string
           description: Product title
         description:
           type: string
           description: Product description
-        country:
-          type: string
-          description: Product origin coutry
         count:
           type: number
           description: Available count
-        color:
-          type: string
-          description: Product color
         price:
           type: number
           description: Product price
@@ -78,8 +86,6 @@ components:
         - id
         - title
         - description
-        - country
         - count
-        - color
         - price
         - image
