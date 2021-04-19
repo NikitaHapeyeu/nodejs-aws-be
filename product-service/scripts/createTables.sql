@@ -11,7 +11,7 @@ create table product (
 
 create table stock (
     product_id      uuid references product(id),
-    count           integer
+    count           integer constraint min_count check (count >=0)
 );
 
 insert into product (title, description, price, image) values ('Ball', 'The Football Is Good For Training And Recreational Purposes', 6, 'https://placeimg.com/640/480?30412');

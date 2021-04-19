@@ -5,7 +5,7 @@ const handler = async (event) => {
     console.log('Incoming event: ', event);
 
     try {
-      const {rows: products} = await query(`SELECT p.id, p.title, p.description, p.price, p.image, s.count FROM product p INNER JOIN stock s ON p.id = s.product_id`);
+      const { rows: products } = await query(`SELECT p.id, p.title, p.description, p.price, p.image, s.count FROM product p INNER JOIN stock s ON p.id = s.product_id`);
       console.log('products: ', products);
       return {
         statusCode: 200,

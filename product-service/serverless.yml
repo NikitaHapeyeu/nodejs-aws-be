@@ -113,3 +113,24 @@ functions:
             parameters:
               paths:
                 id: true
+                  
+  createProduct:
+    handler: handler.createProducts
+    events:
+      - http:
+          method: post
+          path: products
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+          request:
+            parameters:
+              paths:
+                id: true
