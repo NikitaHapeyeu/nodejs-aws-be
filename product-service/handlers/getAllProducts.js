@@ -1,8 +1,12 @@
-import { getMockedProducts } from '../utils/createMockData';
+import { query } from './pgClient';
 
-const handler = async () => {
+const handler = async (event) => {
+
+    console.log('Incoming event: ', event);
+
     try {
-      const products = await getMockedProducts();
+      const {rows: products} = await query(`SELECT p.id, p.title, p.description, p.price, p.image, s.count FROM product p INNER JOIN stock s ON p.id = s.product_id`);
+      console.log('products: ', products);
       return {
         statusCode: 200,
         headers: {
