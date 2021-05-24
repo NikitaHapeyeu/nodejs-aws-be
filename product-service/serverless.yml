@@ -37,43 +37,35 @@ provider:
     PG_NAME: ${env:PG_NAME}
     PG_USERNAME: ${env:PG_USERNAME}
     PG_PASSWORD: ${env:PG_PASSWORD}
+    REGION: ${opt:region, self:custom.region}
+
+    SQS_TOPIC: catalogItemsQueue
+    SNS_TOPIC: !Ref createProductTopic
+    
   stage: dev
-  region: eu-west-1
+  region: ${opt:region, self:custom.region}
+
+iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - "sqs:*"
+    Resource: 
+      - Fn::GetAtt:
+          - catalogItemsQueue
+          - Arn
+  - Effect: "Allow"
+    Action:
+      - "sns:*"
+    Resource: 
+      - !Ref createProductTopic
+
 
 custom:
+  region: eu-west-1
   dotenv:
     exclude:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
 
 functions:
   getAllProducts:
@@ -134,3 +126,54 @@ functions:
             parameters:
               paths:
                 id: true
+
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
+
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+    createProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    createProductTopicSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: lard.tut.by@gmail.com
+        TopicArn : !Ref 'createProductTopic'
+        FilterPolicy:
+          owner:
+            - manager
+    createProductTopicSubscription2:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: lard.tut.by@gmail.com
+        TopicArn : !Ref 'createProductTopic'
+        FilterPolicy:
+          owner:
+            - developer
+  Outputs:
+    createProductTopic:
+      Value: !Ref createProductTopic
+      Export:
+        Name: createProductTopic
+    catalogItemsQueue:
+      Value: 
+        Fn::GetAtt:
+                - catalogItemsQueue
+                - Arn
+      Export:
+        Name: catalogItemsQueue
