@@ -1,3 +1,3 @@
-import { getAllProducts, getProductById, createProducts } from './handlers';
+import { getAllProducts, getProductById, createProducts, catalogBatchProcess } from './handlers';
 
-export { getAllProducts, getProductById, createProducts };
+export { getAllProducts, getProductById, createProducts, catalogBatchProcess };

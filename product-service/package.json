@@ -29,6 +29,7 @@
     "webpack-cli": "^4.1.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.912.0",
     "faker": "^5.5.2",
     "joi": "^17.4.0",
     "pg": "^8.6.0"
